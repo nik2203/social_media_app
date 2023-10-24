@@ -1,8 +1,8 @@
 DBMS='mysql'
 DB_HOST='localhost'
-DB_NAME='pars_messenger'
-DB_USER='prrh'
-DB_PASSWORD='parsa1981'
+DB_NAME='test_proj'
+DB_USER='root'
+DB_PASSWORD='#Nikki2203'
 """
 :pattern <dbms>://<username>:<password>@host/<database name>
 """

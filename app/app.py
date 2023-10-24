@@ -12,13 +12,8 @@ app.secret_key = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 db.init_app(app)
 
-""" 
-for the first time,
-uncomment these lines,
-to create the database tables
-"""
-#db.drop_all(app=app)
-#db.create_all(app=app)
+with app.app_context():
+        db.create_all()
 
 
 app.register_blueprint(auth, url_prefix='/auth')
