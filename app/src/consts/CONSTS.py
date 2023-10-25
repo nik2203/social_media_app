@@ -1,6 +1,6 @@
 DBMS='mysql'
 DB_HOST='localhost'
-DB_NAME='test_proj'
+DB_NAME='social'
 DB_USER='root'
 DB_PASSWORD='#Nikki2203'
 """

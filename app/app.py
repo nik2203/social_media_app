@@ -12,10 +12,6 @@ app.secret_key = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 db.init_app(app)
 
-with app.app_context():
-        db.create_all()
-
-
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(message, url_prefix='/msg')
 app.register_blueprint(friend_request, url_prefix='/req')

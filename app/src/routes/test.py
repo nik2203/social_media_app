@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from ..database.Models import User, FriendRequest, Message, Vertex
+from ..database.Models import User, Friendship, Message
 
 test = Blueprint('test', __name__)
 
@@ -35,19 +35,10 @@ def get_messages():
 @test.route('req')
 def get_requests():
     res = []
-    reqs = FriendRequest.query.all()
+    reqs = Friendship.query.all()
 
     for req in reqs:
         res.append([req.from_node, req.to_node, req.status])
 
     return {'res': res}
 
-@test.route('vertices')
-def get_vertices():
-    res = []
-    vertices = Vertex.query.all()
-
-    for vertex in vertices:
-        res.append([vertex.from_node, vertex.to_node])
-
-    return {'res': res}

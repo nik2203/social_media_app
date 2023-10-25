@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, url_for, request
 from flask_login import login_required, current_user
 
-from ..database.Models import FriendRequest, Vertex
+from ..database.Models import Friendship
 from .. import db
 
 friend_request = Blueprint('friend_request', __name__)
@@ -25,7 +25,7 @@ def send():
             'from_node': current_user.username,
             'to_node': request.form.get('to_node', ''),
         }
-        new_req = FriendRequest(**req)
+        new_req = Friendship(**req)
         db.session.add(new_req)
         db.session.commit()
 
@@ -54,11 +54,7 @@ def accept():
     status = 2 : rejected
     """
     if req['from_node'] :
-        req_db = FriendRequest.query.filter_by(from_node=req['from_node']).update({'status': 1}) #set status to 1
-        db.session.commit()
-
-        friend = Vertex(from_node=req['from_node'], to_node=current_user.username)
-        db.session.add(friend)
+        req_db = Friendship.query.filter_by(from_node=req['from_node']).update({'status': 1}) #set status to 1
         db.session.commit()
 
     return redirect(url_for('dashboard.index'))
@@ -87,7 +83,7 @@ def reject():
     status = 2 : rejected
     """
     if req['from_node'] :
-        req_db = FriendRequest.query.filter_by(from_node=req['from_node']).update({'status': 2}) #set status to 2
+        req_db = Friendship.query.filter_by(from_node=req['from_node']).update({'status': 2}) #set status to 2
         db.session.commit()
 
     return redirect(url_for('dashboard.index'))

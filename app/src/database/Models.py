@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Enum
 
 db = SQLAlchemy()
 
@@ -10,17 +11,18 @@ class User(db.Model, UserMixin) :
     :primary key: id
     :inherit db.Model, UserMixin
     """
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), nullable=False)
-    full_name = db.Column(db.String(150), nullable=False)
-    age = db.Column(db.Integer, nullable=False)
-    email = db.Column(db.String(150), nullable=False)
-    phone_number = db.Column(db.String(150), nullable=False)
-    bio = db.Column(db.Text, nullable=False)
-    privacy_status = db.Column(db.Integer, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    userid = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    firstname = db.Column(db.String(255))
+    lastname = db.Column(db.String(255))
+    gender = db.Column(db.String(1))
+    dateofbirth = db.Column(db.Date)
+    bio = db.Column(db.Text)
+    
 
 class Message(db.Model) :
     """
@@ -29,45 +31,71 @@ class Message(db.Model) :
     :primary key: id
     :inherit db.Model
     """
-    __tablename__ = 'messages'
+    __tablename__ = 'message'
 
-    id = db.Column(db.Integer, primary_key=True)
-    from_node = db.Column(db.String(150), nullable=False)
-    to_node = db.Column(db.String(150), nullable=False)
-    title = db.Column(db.String(250))
+    messageid = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
+    timestamps = db.Column(db.Time)
+    sender1 = db.Column(db.Integer, db.ForeignKey('user.userid'))
+    sender2 = db.Column(db.Integer, db.ForeignKey('user.userid'))
 
-class FriendRequest(db.Model) :
+class Friendship(db.Model) :
     """
     friend request model
 
     :primary key: id
     :inherit db.Model
     """
-    __tablename__ = 'friend_requests'
+    __tablename__ = 'friendship'
 
-    id = db.Column(db.Integer, primary_key=True)
-    from_node = db.Column(db.String(150), nullable=False)
-    to_node = db.Column(db.String(150), nullable=False)
-    status = db.Column(db.Integer, default=0)
+    FRIENDSHIP_STATUS = ('pending', 'accepted', 'rejected')
 
+    friendshipid = db.Column(db.Integer, primary_key=True)
+    userid1 = db.Column(db.Integer, db.ForeignKey('user.userid'))
+    userid2 = db.Column(db.Integer, db.ForeignKey('user.userid'))
+    status = db.Column(Enum(*FRIENDSHIP_STATUS, name='friendship_status'))
 
-class Vertex(db.Model) :
+class Post(db.Model) :
+    __tablename__ = 'post'
+
+    postid = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('user.userid'))
+    content = db.Column(db.Text)
+    timestamps = db.Column(db.Time)
+
+class Userlike(db.Model) :
+    __tablename__ = 'userlike'
+
+    likeid = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('user.userid'))
+    postid = db.Column(db.Integer, db.ForeignKey('post.postid'))
+    timestamps = db.Column(db.Time)
+
+class Comment(db.Model):
     """
-    graph model
-
-    :from_node (username)
-    :to_node (username)
-    [from_node ---> to_node]
-    [-|---------|---------|]
-    [-V---------V---------V]
-    [vertex1--edge--vertex2]
+    comment model
 
     :primary key: id
     :inherit db.Model
     """
-    __tablename__ = 'vertices'
+    __tablename__ = 'comment'
 
-    id = db.Column(db.Integer, primary_key=True)
-    from_node = db.Column(db.String(150), nullable=False)
-    to_node = db.Column(db.String(150), nullable=False)
+    commentid = db.Column(db.Integer, primary_key=True)
+    postid = db.Column(db.Integer, db.ForeignKey('posts.postid'), nullable=False)
+    userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
+    content = db.Column(db.Text)
+    timestamps = db.Column(db.Time)
+
+class Notification(db.Model):
+    """
+    notification model
+
+    :primary key: id
+    :inherit db.Model
+    """
+    __tablename__ = 'notification'
+
+    notificationid = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
+    content = db.Column(db.Text)
+    timestamps = db.Column(db.Time)
